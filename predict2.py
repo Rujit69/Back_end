@@ -28,9 +28,12 @@ def load_model():
         nn.Dropout(0.5),
         nn.Linear(512, 2)
     )
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # Ensure model loads on CPU regardless of the system's GPU availability
+    device = torch.device('cpu')
     model = model.to(device)
-    checkpoint = torch.load(checkpoint_path)
+    
+    # Load the model checkpoint and map to CPU
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     return model, device
